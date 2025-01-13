@@ -8,40 +8,101 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model user {
+model User {
   id                   Int            @id @default(autoincrement())
+  fan_id               Int
   full_name            String
   email                String         @unique
   password             String
   zip_code             Int?
   credit_card          String? // Object type to specify
-  dressing             Clothing[]?
-  favorite_clothes     Clothing[]?
-  favorite_users       User[]?
+  // dressing             Dressing[]
+  // favorite_clothes     Clothing[]
+  // favorite_users       UserFavorites 
+  // fanUser_id      Int
+  // fan          User @relation(fields: [fanUser_id], references: [id], onDelete: Cascade)
+  // favorited_by         User[]
+  user_id              Int
   search_area          Int? // Object type to specify
-  favorite_themes      Theme[]?
-  transactions_history Transaction[]? // Search history to add later?
+  // favorite_themes      Theme[]
+  // transactions_history Transaction[] // Search history to add later?
   evaluation           Float?
   avatar_url           String?
+
+  Clothing Clothing[]
 }
 
-model clothing {
+model Clothing {
   id           Int           @id @default(autoincrement())
   name         String?
+  user     User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id   Int
+  // owner_id    Int
+  // fan_id      Int
+  // // owner        User@relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  // fan          User @relation(fields: [fan_id], references: [id], onDelete: Cascade)
+  // dressing_id  Int
   type         ClothingType // enum
   size         ClothingSize // enum
-  theme        Theme[]
-  gender       Gender[]
+  themes       Theme[]
+  genders      Gender[]
   brand        Brand // enum
   state        ClothingState
   availability Boolean
   pictures     Picture[]
   description  String
-  lend_start   Date
-  lend_end     Date
+  lend_start   DateTime
+  lend_end     DateTime
 }
+
+// model Dressing{
+//   id          Int            @id @default(autoincrement())
+//   clothing    Clothing[]
+//   user        User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+//   user_id     Int @unique
+
+// }
+
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+
+//user
+// model Transaction{
+  
+// }
+
+//Clothing
+
+model Brand{
+ id           Int           @id @default(autoincrement())
+
+}
+model Picture{
+  id           Int           @id @default(autoincrement())
+
+}
+
+model Theme{
+  id           Int           @id @default(autoincrement())
+
+}
+model Gender{
+  id           Int           @id @default(autoincrement())
+
+}
+model ClothingState {
+  id           Int           @id @default(autoincrement())
+}
+model ClothingSize {
+  id           Int           @id @default(autoincrement())
+  
+}
+model ClothingType{
+  id           Int           @id @default(autoincrement())
+
+}
+
