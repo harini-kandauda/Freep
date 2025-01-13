@@ -8,6 +8,39 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model user {
+  id                   Int            @id @default(autoincrement())
+  full_name            String
+  email                String         @unique
+  password             String
+  zip_code             Int?
+  credit_card          String? // Object type to specify
+  dressing             Clothing[]?
+  favorite_clothes     Clothing[]?
+  favorite_users       User[]?
+  search_area          Int? // Object type to specify
+  favorite_themes      Theme[]?
+  transactions_history Transaction[]? // Search history to add later?
+  evaluation           Float?
+  avatar_url           String?
+}
+
+model clothing {
+  id           Int           @id @default(autoincrement())
+  name         String?
+  type         ClothingType // enum
+  size         ClothingSize // enum
+  theme        Theme[]
+  gender       Gender[]
+  brand        Brand // enum
+  state        ClothingState
+  availability Boolean
+  pictures     Picture[]
+  description  String
+  lend_start   Date
+  lend_end     Date
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
