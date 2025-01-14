@@ -1,35 +1,36 @@
-// app.js 
-import 'dotenv/config'
-import express from 'express'
-// import { PrismaClient } from "@prisma/client"
-// import bcrypt from 'bcryptjs'
-// import cookieParser from 'cookie-parser'
-// import { v4 as uuidv4 } from 'uuid'
+import express from "express";
+import dotenv from "dotenv";
+import { PrismaClient } from "@prisma/client";
 
-
-// import { sendMyMail } from './lib/mail.mjs'
-
-// const prisma = new PrismaClient();
 const app = express();
-// const codes = {};
+dotenv.config();
+const prisma = new PrismaClient();
+// body parser
+app.use(express.urlencoded({ extended: true }));
+// JSON parser
+app.use(express.json());
 
-app.set('view engine', 'ejs')
+/////////////////// MIDDLEWARES ///////////////////
 
-///////////////////MIDDLEWARES/////////////:
+// Create Article
+app.post("/api/create_article", async (req, res) => {
+  const { title, desc } = req.body;
+  // Log des données reçues
+  console.log("Données reçues : ", { title, desc });
+  res.sendStatus(200);
 
-app.use(express.urlencoded({ extended: true} ))
-// app.use(cookieParser())
-
-
-// app.get('/home', (req, res) => {
-//    res.render('home', {errorMessage: null})
-
-// })
-
-
+  const newArticle = await prisma.Clothing.create({
+    data: {
+      name: title,
+      description: desc,
+    },
+  });
+  console.log("Article created:", newArticle);
+});
 
 ////////////////////////////////////////
-const PORT = process.env.PORT || 3005
+
+const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
-   console.log(`Server listening on port http://localhost:${PORT}`)
-})
+  console.log(`Server listening on port http://localhost:${PORT}`);
+});

@@ -9,12 +9,12 @@ generator client {
 }
 
 model User {
-  id                   Int            @id @default(autoincrement())
-  full_name            String?
-  email                String?         @unique
-  password             String?
-  dressing             Clothing[]
-  avatar_url           String
+  id         Int        @id @default(autoincrement())
+  full_name  String?
+  email      String?    @unique
+  password   String?
+  dressing   Clothing[]
+  avatar_url String?
   // zip_code             Int
   // credit_card          String? // Object type to specify
   // dressing             Dressing[]  // favorite_clothes     Clothing[]
@@ -30,12 +30,12 @@ model User {
 }
 
 model Clothing {
-  id            Int           @id @default(autoincrement())
-  name          String?
-  user          User @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id       Int
-  pictures     Picture[]
-  description  String
+  id          Int       @id @default(autoincrement())
+  name        String?
+  user        User?     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id     Int?
+  pictures    Picture[] @relation("ClothingPictures")
+  description String?
   // type         String?// enum
   // size         String?// // enum
   // themes       String?// Theme[]
@@ -45,18 +45,18 @@ model Clothing {
   // availability Boolean
   // lend_start   DateTime
   // lend_end     DateTime
-    // owner_id    Int
+  // owner_id    Int
   // fan_id      Int
   // // owner        User@relation(fields: [owner_id], references: [id], onDelete: Cascade)
   // fan          User @relation(fields: [fan_id], references: [id], onDelete: Cascade)
   // dressing_id  Int
 }
 
-model Picture{
-  id          Int            @id @default(autoincrement())
+model Picture {
+  id          Int       @id @default(autoincrement())
   url         String?
-  clothing    Clothing @relation(fields: [clothing_id], references: [id], onDelete: Cascade)
-  clothing_id Int
+  clothing    Clothing? @relation("ClothingPictures", fields: [clothing_id], references: [id], onDelete: Cascade)
+  clothing_id Int?
 }
 
 datasource db {
@@ -66,7 +66,7 @@ datasource db {
 
 //user
 // model Transaction{
-  
+
 // }
 
 //Clothing
@@ -100,12 +100,9 @@ datasource db {
 // }
 // model ClothingSize {
 //   id           Int           @id @default(autoincrement())
-  
+
 // }
 // model ClothingType{
 //   id           Int           @id @default(autoincrement())
 
 // }
-
-
-
