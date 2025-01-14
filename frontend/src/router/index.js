@@ -1,24 +1,28 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '/src/views/Home.vue'
-import EditProfil from '/src/views/EditProfil.vue'
-import MyProfil from '/src/views/MyProfil.vue'
+import EditProfile from '/src/views/EditProfile.vue'
+import MyProfile from '/src/views/MyProfile.vue'
 
 const routes = [
    {
       path: '/',
       redirect: '/home',
    },
+
    {
       path: '/home',
       component: Home,
    }, 
    {
-      path: '/edit_profil',
-      component: EditProfil,
+      path: '/edit_profile/:userId',
+      component: EditProfile,
+      props : true,
    },
+
    {
-      path: '/myprofil',
-      component: MyProfil,
+      path: '/myprofile/:userId*',
+      component: MyProfile,
+      props : true,
    },
 
 

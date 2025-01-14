@@ -1,11 +1,10 @@
 <template>
     <div class="edit-profile-container">
-      <h2>Éditez votre profile </h2>
-      <form @submit.prevent="editUser ">
+      <h2>Éditez votre profil </h2>
+      <form @submit.prevent="editUser">
         <div class="form-group mb-2">
           <label for="name">Nom complet</label>
-          
-          <input type="text" v-model="formData.name" placeholder="Votre nom complet" required>
+          <input type="name" v-model="formData.full_name" placeholder="Votre nom complet" required>
         </div>
 
         <br>
@@ -29,14 +28,14 @@
         <br>
         <div class="form-group mb-4">
           <label for="avatar">Avatar (URL)</label>
-          <input type="text" v-model="formData.avatar" placeholder="URL de votre avatar" required>
+          <input type="text" v-model="formData.avatar_url" placeholder="URL de votre avatar" >
         </div>
 
         <br>
         <!-- <p>Pour finaliser la modification de votre profil, cliquez sur "Mettre à jour"</p> -->
          <div class=" Mettreà jour ">
             <button type="submit" class="large-button">Mettre à jour </button>
-             <router-link :to="`/myprofil`">
+             <router-link :to="`/myprofile`">
              </router-link>
         <br> 
          </div>
@@ -49,21 +48,50 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue';
-  import { useRouter } from 'vue-router';
+  import { ref, onMounted } from 'vue';
+  import { useRoute } from 'vue-router';
   
-  const router = useRouter();
+  
+  const route = useRoute();
+  
   const error_message = ref('');
-  const formData = ref({
-    name: '',
-    email: '',
-    password: '',
-    password2: '',
-    avatar: ''
-  });
-  
+  const formData = ref({});
+
+
+  //Fonction utilisant fetch pour récupérer les données 
+
+  const fetchUser  = async () => {
+  try {
+    const response = await fetch(`/api/user/${props.userId}`);
+    
+    if (!response.ok) {
+      console.log("Utilisateur non trouvé");
+      return; // Exit the function if the user is not found
+    }
+    
+    formData.value = await response.json();
+    console.log("Utilisateur récupéré:", formData.value);
+  } catch (error) {
+    console.error("Erreur lors de la récupération de l'utilisateur:", error);
+  }
+};
+
+  // définie ce qu'on récupére de la vue 
+  const props = defineProps({
+   userId: {
+      type: String,
+      required: true
+   },
+  })
+
+  // définie ce qu'on envoie à la vue
+  onMounted(async () => {
+    await fetchUser()
+  })
+
   async function editUser () {
-    const response = await fetch('/api/edit_profil', {
+    formData.value.userId = props.userId;
+    const response = await fetch('/api/edit_profile', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -73,13 +101,15 @@
   
     if (response.ok) {
       // Rediriger vers la page profil
-      router.push('/myprofil');
+      router.push('/myprofile');
     } else {
       const errorText = await response.text();
       console.error('Error response:', errorText);
       error_message.value = errorText; // Afficher le message d'erreur
     }
   }
+
+  
   </script>
   
   <style scoped>
