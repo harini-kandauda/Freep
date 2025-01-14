@@ -14,7 +14,7 @@ model User {
   email                String?         @unique
   password             String?
   dressing             Clothing[]
-  avatar_url           String
+  avatar_url           String?
   // zip_code             Int
   // credit_card          String? // Object type to specify
   // dressing             Dressing[]  // favorite_clothes     Clothing[]
@@ -35,7 +35,7 @@ model Clothing {
   user          User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id       Int
   pictures     Picture[]
-  description  String
+  description  String?
   // type         String?// enum
   // size         String?// // enum
   // themes       String?// Theme[]
