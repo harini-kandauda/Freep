@@ -1,5 +1,5 @@
 <template>
-  <h1>Inscription</h1>
+  <h1>Création de compte</h1>
   <form @submit.prevent="signupUser">
     <p>
       <label for="full_name">Nom</label>

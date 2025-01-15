@@ -1,12 +1,5 @@
-<template>
-    Hello
-</template>
+<template>Mon profil sera là</template>
 
-<script scooped >
+<script setup></script>
 
-</script>
-
-<style>
-
-
-</style>
+<style scoped></style>
