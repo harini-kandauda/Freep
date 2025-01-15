@@ -18,16 +18,14 @@ app.set("view engine", "ejs");
 app.use(express.json());
 app.use(cookieParser());
 
-// Création de compte
+// Create account
 app.post("/api/signup", async (req, res) => {
   const { full_name, email, password, password2 } = req.body;
 
-  // Vérification si l'utilisateur existe déjà
   if (password === password2) {
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
-    console.log("existing user : ", existingUser);
 
     if (existingUser) {
       res.sendStatus(400);
