@@ -1,45 +1,41 @@
-// app.js 
-import 'dotenv/config'
-import express from 'express'
-import { PrismaClient } from "@prisma/client"
-// import bcrypt from 'bcryptjs'
-// import cookieParser from 'cookie-parser'
-// import { v4 as uuidv4 } from 'uuid'
+import express from "express";
+import dotenv from "dotenv";
+import { PrismaClient } from "@prisma/client";
 
-
-// import { sendMyMail } from './lib/mail.mjs'
-
-const prisma = new PrismaClient();
 const app = express();
+dotenv.config();
+const prisma = new PrismaClient();
+app.use(express.json());
 
-// const codes = {};
+/////////////////// MIDDLEWARES ///////////////////
 
-app.set('view engine', 'ejs')
+// Create Article
+app.post("/api/create_article", async (req, res) => {
+  const { title, desc } = req.body;
+  res.sendStatus(200);
 
-///////////////////MIDDLEWARES/////////////:
-
-app.use(express.json())
-// app.use(cookieParser())
-
-
-// app.get('/home', (req, res) => {
-//    res.render('home', {errorMessage: null})
-
-// })
-
-app.get('/api/clothing', async (req, res) =>{
-   const clothingData = await prisma.clothing.findMany({
-      include: {
-         user: true,
-         pictures: true,
-      },
-   });
-   res.json(clothingData);
+  const newArticle = await prisma.Clothing.create({
+    data: {
+      name: title,
+      description: desc,
+    },
+  });
 });
 
+// List Articles
+app.get("/api/clothing", async (req, res) => {
+  const clothingData = await prisma.clothing.findMany({
+    include: {
+      user: true,
+      pictures: true,
+    },
+  });
+  res.json(clothingData);
+});
 
 ////////////////////////////////////////
-const PORT = process.env.PORT || 3005
+
+const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
-   console.log(`Server listening on port http://localhost:${PORT}`)
-})
+  console.log(`Server listening on port http://localhost:${PORT}`);
+});
