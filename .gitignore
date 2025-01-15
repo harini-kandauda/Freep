@@ -1,8 +1,3 @@
 node_modules
 dist
 .env
-.vscode
-prisma/dev.db
-ecosystem.config.cjs
-package-lock.json
-.DS-Store
