@@ -5,9 +5,6 @@ import { PrismaClient } from "@prisma/client";
 const app = express();
 dotenv.config();
 const prisma = new PrismaClient();
-// body parser
-app.use(express.urlencoded({ extended: true }));
-// JSON parser
 app.use(express.json());
 
 /////////////////// MIDDLEWARES ///////////////////
@@ -15,8 +12,6 @@ app.use(express.json());
 // Create Article
 app.post("/api/create_article", async (req, res) => {
   const { title, desc } = req.body;
-  // Log des données reçues
-  console.log("Données reçues : ", { title, desc });
   res.sendStatus(200);
 
   const newArticle = await prisma.Clothing.create({
@@ -25,7 +20,17 @@ app.post("/api/create_article", async (req, res) => {
       description: desc,
     },
   });
-  console.log("Article created:", newArticle);
+});
+
+// List Articles
+app.get("/api/clothing", async (req, res) => {
+  const clothingData = await prisma.clothing.findMany({
+    include: {
+      user: true,
+      pictures: true,
+    },
+  });
+  res.json(clothingData);
 });
 
 ////////////////////////////////////////

@@ -9,12 +9,12 @@ generator client {
 }
 
 model User {
-  id         Int        @id @default(autoincrement())
-  full_name  String?
-  email      String?    @unique
-  password   String?
-  dressing   Clothing[]
-  avatar_url String?
+  id        Int        @id @default(autoincrement())
+  full_name String?
+  email     String?    @unique
+  password  String?
+  dressing  Clothing[]
+  // avatar_url           String?
   // zip_code             Int
   // credit_card          String? // Object type to specify
   // dressing             Dressing[]  // favorite_clothes     Clothing[]
@@ -32,9 +32,9 @@ model User {
 model Clothing {
   id          Int       @id @default(autoincrement())
   name        String?
-  user        User?     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id     Int?
-  pictures    Picture[] @relation("ClothingPictures")
+  user        User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id     Int
+  pictures    Picture[]
   description String?
   // type         String?// enum
   // size         String?// // enum
@@ -55,7 +55,7 @@ model Clothing {
 model Picture {
   id          Int       @id @default(autoincrement())
   url         String?
-  clothing    Clothing? @relation("ClothingPictures", fields: [clothing_id], references: [id], onDelete: Cascade)
+  clothing    Clothing? @relation(fields: [clothing_id], references: [id], onDelete: Cascade)
   clothing_id Int?
 }
 

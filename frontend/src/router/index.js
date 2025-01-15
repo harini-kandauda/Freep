@@ -15,6 +15,10 @@ const routes = [
     path: "/creer-annonce",
     component: ArticleCreate,
   },
+  {
+    path: "/articlelist",
+    component: ArticleList,
+  },
 ];
 
 const router = createRouter({
