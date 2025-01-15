@@ -10,11 +10,11 @@ export default defineConfig({
     host: true, // allows for external device connection on local network
     proxy: {
       //  // prevent CORS error in dev when backend and frontend servers run on different ports
-      //  '^/auth/*': {
-      //   target: 'http://localhost:3005',
-      //   changeOrigin : true,
-      //  },
-       '^/api/.*': {
+       '^/auth/*': {
+        target: 'http://localhost:3005',
+        changeOrigin : true,
+       },
+       '^/api/*': {
           target: 'http://localhost:3005',
           changeOrigin: true,
        },
