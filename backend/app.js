@@ -48,7 +48,7 @@ app.post('/api/edit_profile', async (req, res) => {
          where: { email },
          data: {
             full_name, // Mise à jour du nom complet
-            password: hashedPassword, // Mise à jour du mot de passe
+            password, // Mise à jour du mot de passe
             avatar_url, // Mise à jour de l'avatar
          }
       });
