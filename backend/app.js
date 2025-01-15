@@ -1,31 +1,65 @@
-// app.js 
-import 'dotenv/config'
-import express from 'express'
 
-import { PrismaClient } from "@prisma/client"
-import bcrypt from 'bcryptjs'
-// import cookieParser from 'cookie-parser'
-// import { v4 as uuidv4 } from 'uuid'
+import express from "express";
+import dotenv from "dotenv";
+import { PrismaClient } from "@prisma/client";  
+import bcrypt from "bcryptjs";
 
-
-// import { sendMyMail } from './lib/mail.mjs'
-
-const prisma = new PrismaClient();
 const app = express();
-// const codes = {};
+dotenv.config();
+const prisma = new PrismaClient();
+app.use(express.json());
 
+/////////////////// MIDDLEWARES ///////////////////
 
-///////////////////MIDDLEWARES/////////////:
+// Create Article
+app.post("/api/create_article", async (req, res) => {
+  const { title, desc } = req.body;
+  res.sendStatus(200);
 
-app.use(express.json())
-// app.use(cookieParser())
+ const newArticle = await prisma.Clothing.create({
+    data: {
+      name: title,
+      description: desc,
+    },
+  });
+});
 
+// List Articles
+app.get("/api/clothing", async (req, res) => {
+  const clothingData = await prisma.clothing.findMany({
+    include: {
+      user: true,
+      pictures: true,
+    },
+  });
+  res.json(clothingData);
+});
 
+// Create account
+app.post("/api/signup", async (req, res) => {
+  const { full_name, email, password, password2 } = req.body;
 
-// app.get('/home', (req, res) => {
-//    res.render('home', {errorMessage: null})
+  if (password === password2) {
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
 
-// })
+    if (existingUser) {
+      res.sendStatus(400);
+    } else {
+      const hashedPassword = await bcrypt.hash(password, 3);
+      const createUser = await prisma.User.create({
+        data: { full_name, email, password: hashedPassword },
+      });
+      res.sendStatus(200);
+    }
+  } else {
+    res.sendStatus(403);
+  }
+});
+
+// Edit Profile
+
 
 app.post('/api/edit_profile', async (req, res) => { 
    console.log("editer :", req.body);
@@ -74,9 +108,9 @@ app.get('/api/user/:id' ,async (req, res) => {
    }
 })
 
-
 ////////////////////////////////////////
-const PORT = process.env.PORT || 3005
+
+const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
-   console.log(`Server listening on port http://localhost:${PORT}`)
-})
+  console.log(`Server listening on port http://localhost:${PORT}`);
+});
