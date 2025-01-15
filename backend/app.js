@@ -1,35 +1,56 @@
-// app.js 
-import 'dotenv/config'
-import express from 'express'
-// import { PrismaClient } from "@prisma/client"
-// import bcrypt from 'bcryptjs'
-// import cookieParser from 'cookie-parser'
+import "dotenv/config";
+import express from "express";
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
+import cookieParser from "cookie-parser";
 // import { v4 as uuidv4 } from 'uuid'
-
 
 // import { sendMyMail } from './lib/mail.mjs'
 
-// const prisma = new PrismaClient();
+const prisma = new PrismaClient();
 const app = express();
-// const codes = {};
+const codes = {};
 
-app.set('view engine', 'ejs')
+app.set("view engine", "ejs");
 
 ///////////////////MIDDLEWARES/////////////:
 
-app.use(express.urlencoded({ extended: true} ))
-// app.use(cookieParser())
+app.use(express.json());
+app.use(cookieParser());
 
+// Création de compte
+app.post("/api/signup", async (req, res) => {
+  const { full_name, email, password, password2 } = req.body;
 
-// app.get('/home', (req, res) => {
-//    res.render('home', {errorMessage: null})
+  // Vérification si l'utilisateur existe déjà
+  if (password === password2) {
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+    console.log("existing user : ", existingUser);
 
-// })
+    if (existingUser) {
+      res.sendStatus(400);
+    } else {
+      const hashedPassword = await bcrypt.hash(password, 3);
+      const createUser = await prisma.User.create({
+        data: { full_name, email, password: hashedPassword },
+      });
+      res.sendStatus(200);
+    }
+  } else {
+    res.sendStatus(403);
+  }
+});
 
-
+//   if (user) {
+//     const match = await bcrypt.compare(password, user.password);
+//   } else {
+//     res.sendStatus(403);
+//   }
 
 ////////////////////////////////////////
-const PORT = process.env.PORT || 3005
+const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
-   console.log(`Server listening on port http://localhost:${PORT}`)
-})
+  console.log(`Server backend listening on port http://localhost:${PORT}`);
+});
