@@ -89,8 +89,10 @@
     await fetchUser()
   })
 
-  async function editUser () {
-    formData.value.userId = props.userId;
+async function editUser () {
+  formData.value.userId = props.userId;
+  console.log("Données envoyées au serveur:", formData.value);
+  try{
     const response = await fetch('/api/edit_profile', {
       method: 'POST',
       headers: {
@@ -104,11 +106,31 @@
       router.push('/myprofile');
     } else {
       const errorText = await response.text();
-      console.error('Error response:', errorText);
+      console.error("Error response:", errorText);
       error_message.value = errorText; // Afficher le message d'erreur
     }
-  }
-
+  }catch (error) {
+    console.error("Fetch Error:", error); // Debug : Log a fetch error
+  } 
+}
+  // async function update(email) {
+  //   formData.value.email = email;
+  //   const response = await fetch('/api/edit_profile', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(formData.value),
+  //       });
+  //       if (response.ok) {
+  //         // Rediriger vers la page profil
+  //         router.push('/myprofile');
+  //         } else {
+  //           const errorText = await response.text();
+  //           console.error("Error response:", errorText);
+  //           error_message.value = errorText; // Afficher le message d'erreur
+  //         }  
+  // }
   
   </script>
   
