@@ -52,10 +52,9 @@ app.post('/api/edit_profile', async (req, res) => {
             avatar_url, // Mise à jour de l'avatar
          }
       });
-
       return res.status(200).json({ success_message: "Votre profil a été mis à jour avec succès." });
    } catch (error) {
-      return res.status(500).json({ error: 'Erreur lors de la mise à jour de l\'utilisateur', details: error.message });
+      return res.status(500).json({ error: "Erreur lors de la mise à jour de l'utilisateur", details: error.message });
    }
 });
 
