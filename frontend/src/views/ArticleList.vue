@@ -10,18 +10,6 @@
             ><i class="bi bi-plus-circle-fill"></i
           ></a>
         </div>
-        <!-- <form action="">
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-search"></i></span>
-            <input
-              type="text"
-              name="visit_search"
-              class="form-control form-control-lg"
-              id="visit_search"
-              placeholder="Rechercher une visite"
-            />
-          </div> -->
-        <!-- </form> -->
       </div>
       <table class="table table-striped align-middle">
         <thead>
@@ -53,7 +41,7 @@
           </div>
         </tbody>
       </table>
-      <button> </button>
+      <button @click="goToCreateArticle" class="create-button">+</button>
   </template>
 
   
@@ -70,5 +58,7 @@ onMounted (() => {
         clothingList.value = data;
     })
 })
-
+function goToCreateArticle () {
+    this.$router.push('/create-article');
+}
 </script>
