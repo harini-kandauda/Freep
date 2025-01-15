@@ -8,13 +8,18 @@ generator client {
   provider = "prisma-client-js"
 }
 
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
 model User {
   id                   Int            @id @default(autoincrement())
   full_name            String?
   email                String?         @unique
   password             String?
   dressing             Clothing[]
-  avatar_url           String
+  avatar_url           String?
   // zip_code             Int
   // credit_card          String? // Object type to specify
   // dressing             Dressing[]  // favorite_clothes     Clothing[]
@@ -35,7 +40,7 @@ model Clothing {
   user          User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id       Int
   pictures     Picture[]
-  description  String
+  description  String?
   // type         String?// enum
   // size         String?// // enum
   // themes       String?// Theme[]
@@ -57,11 +62,6 @@ model Picture{
   url         String?
   clothing    Clothing @relation(fields: [clothing_id], references: [id], onDelete: Cascade)
   clothing_id Int
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 //user

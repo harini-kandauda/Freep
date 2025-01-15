@@ -32,7 +32,7 @@
   <p class="" error>{{ errorMessage }}</p>
 </template>
 
-<script>
+<script setup>
 import { ref } from "vue";
 import router from "../router";
 import { host } from "../use/useHost";
