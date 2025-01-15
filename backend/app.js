@@ -1,22 +1,38 @@
-import "dotenv/config";
 import express from "express";
-import { PrismaClient } from "@prisma/client";
+import dotenv from "dotenv";
+import { PrismaClient } from "@prisma/client";  
 import bcrypt from "bcryptjs";
-import cookieParser from "cookie-parser";
-// import { v4 as uuidv4 } from 'uuid'
 
-// import { sendMyMail } from './lib/mail.mjs'
-
-const prisma = new PrismaClient();
 const app = express();
-const codes = {};
-
-app.set("view engine", "ejs");
-
-///////////////////MIDDLEWARES/////////////:
-
+dotenv.config();
+const prisma = new PrismaClient();
 app.use(express.json());
-app.use(cookieParser());
+
+/////////////////// MIDDLEWARES ///////////////////
+
+// Create Article
+app.post("/api/create_article", async (req, res) => {
+  const { title, desc } = req.body;
+  res.sendStatus(200);
+
+  const newArticle = await prisma.Clothing.create({
+    data: {
+      name: title,
+      description: desc,
+    },
+  });
+});
+
+// List Articles
+app.get("/api/clothing", async (req, res) => {
+  const clothingData = await prisma.clothing.findMany({
+    include: {
+      user: true,
+      pictures: true,
+    },
+  });
+  res.json(clothingData);
+});
 
 // Create account
 app.post("/api/signup", async (req, res) => {
@@ -41,14 +57,9 @@ app.post("/api/signup", async (req, res) => {
   }
 });
 
-//   if (user) {
-//     const match = await bcrypt.compare(password, user.password);
-//   } else {
-//     res.sendStatus(403);
-//   }
-
 ////////////////////////////////////////
+
 const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
-  console.log(`Server backend listening on port http://localhost:${PORT}`);
+  console.log(`Server listening on port http://localhost:${PORT}`);
 });
