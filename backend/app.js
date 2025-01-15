@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";  
+import bcrypt from "bcryptjs";
 
 const app = express();
 dotenv.config();
@@ -31,6 +32,29 @@ app.get("/api/clothing", async (req, res) => {
     },
   });
   res.json(clothingData);
+});
+
+// Create account
+app.post("/api/signup", async (req, res) => {
+  const { full_name, email, password, password2 } = req.body;
+
+  if (password === password2) {
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      res.sendStatus(400);
+    } else {
+      const hashedPassword = await bcrypt.hash(password, 3);
+      const createUser = await prisma.User.create({
+        data: { full_name, email, password: hashedPassword },
+      });
+      res.sendStatus(200);
+    }
+  } else {
+    res.sendStatus(403);
+  }
 });
 
 ////////////////////////////////////////

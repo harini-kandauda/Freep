@@ -5,16 +5,19 @@ import vue from "@vitejs/plugin-vue";
 export default defineConfig({
   plugins: [vue()],
   server: {
+    port: 8002, //Port pour le frontend
+    open: true,
+    host: true, // allows for external device connection on local network
     proxy: {
       //  // prevent CORS error in dev when backend and frontend servers run on different ports
-      "^/auth/*": {
-        target: "http://localhost:3005",
-        changeOrigin: true,
-      },
-      "^/api/*": {
-        target: "http://localhost:3005",
-        changeOrigin: true,
-      },
-    },
-  },
-});
+      //  '^/auth/*': {
+      //   target: 'http://localhost:3005',
+      //   changeOrigin : true,
+      //  },
+       '^/api/.*': {
+          target: 'http://localhost:3005', //Adresse du backend
+          changeOrigin: true,
+       },
+    }
+},
+})
