@@ -23,7 +23,7 @@
       </select>
     </div>
     <div>
-      <label for="article_image">Image</label>
+      <label for="article_image">Image URL</label>
       <input
         type="url"
         name="article_image"
