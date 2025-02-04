@@ -23,7 +23,7 @@
     </div>
     <div>
       <label for="article_size">Genre</label>
-      <select v-model="formData.genders">
+      <select v-model="formData.gender">
         <option disabled value="">Veuillez sélectionner un genre</option>
         <option>Homme</option>
         <option>Femme</option>
