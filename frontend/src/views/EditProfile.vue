@@ -120,8 +120,8 @@ async function editUser() {
     });
 
     if (response.ok) {
-      // Rediriger vers la page profil
-      router.push("/myprofile");
+      // Rediriger vers la page d'articles
+      router.push("/articlelist");
     } else {
       const errorText = await response.text();
       console.error("Error response:", errorText);
