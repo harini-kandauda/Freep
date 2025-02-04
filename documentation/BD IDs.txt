@@ -1,7 +1,0 @@
-User PostgreSQL :
-
-db : freep
-user : julien
-pw : POSdev25*
-
-
