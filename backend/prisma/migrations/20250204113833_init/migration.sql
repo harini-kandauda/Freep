@@ -4,7 +4,6 @@ CREATE TABLE "User" (
     "full_name" TEXT,
     "email" TEXT,
     "password" TEXT,
-    "avatar_url" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -13,8 +12,12 @@ CREATE TABLE "User" (
 CREATE TABLE "Clothing" (
     "id" SERIAL NOT NULL,
     "name" TEXT,
-    "user_id" INTEGER NOT NULL,
+    "user_id" INTEGER,
     "description" TEXT,
+    "type" TEXT,
+    "size" TEXT,
+    "genders" TEXT,
+    "state" TEXT,
 
     CONSTRAINT "Clothing_pkey" PRIMARY KEY ("id")
 );
@@ -23,7 +26,7 @@ CREATE TABLE "Clothing" (
 CREATE TABLE "Picture" (
     "id" SERIAL NOT NULL,
     "url" TEXT,
-    "clothing_id" INTEGER NOT NULL,
+    "clothing_id" INTEGER,
 
     CONSTRAINT "Picture_pkey" PRIMARY KEY ("id")
 );

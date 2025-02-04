@@ -19,11 +19,13 @@
             :key="picture.id"
             :src="picture.url"
             :alt="clothing.name"
+            width="100px"
+            height="100px"
           />
         </td>
         <td>{{ clothing.name }}</td>
         <td>{{ clothing.description }}</td>
-        <!-- <td>{{ clothing.user.full_name }}</td> -->
+        <td>{{ clothing.user.full_name }}</td>
       </tr>
     </tbody>
   </table>
