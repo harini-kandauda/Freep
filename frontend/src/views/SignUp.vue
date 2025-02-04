@@ -1,5 +1,5 @@
 <template>
-  <h1>Inscription</h1>
+  <h1>Création de compte</h1>
   <form @submit.prevent="signupUser">
     <p>
       <label for="full_name">Nom</label>
@@ -54,7 +54,9 @@ async function signupUser() {
     router.push("/articlelist");
   } else {
     if (response.status === 400) {
-      errorMessage.value = "Cet email est déjà utilisé";
+      errorMessage.value = "Cet email est déjà utilisé.";
+    } else if (response.status === 403) {
+      errorMessage.value = "Les mots de passe sont différents."
     } else {
       errorMessage.value = "Erreur";
     }

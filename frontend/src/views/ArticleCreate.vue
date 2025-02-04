@@ -15,6 +15,7 @@
 
 <script setup>
 import { ref } from "vue";
+import router from "../router";
 
 // POST
 const formData = ref({});
@@ -30,7 +31,7 @@ async function createArticle() {
 
   if (response.status === 200) {
     console.log("Youpi !");
-    // router.push("/verification");
+    router.push("/articlelist");
   } else {
     errorMessage.value = "Oups...";
   }
