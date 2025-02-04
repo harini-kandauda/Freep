@@ -13,7 +13,7 @@ app.use(express.json());
 // Create Article
 app.post("/api/create_article", async (req, res) => {
   console.log("req", req);
-  const { title, desc, type, size, gender, state } = req.body;
+  const { title, desc, type, size, gender, state, image } = req.body;
 
   const newArticle = await prisma.Clothing.create({
     data: {
@@ -23,6 +23,7 @@ app.post("/api/create_article", async (req, res) => {
       type: type,
       genders: gender,
       state: state,
+      image: image,
     },
   });
   console.log("New article : ", newArticle);
