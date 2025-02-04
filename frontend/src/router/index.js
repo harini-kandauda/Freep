@@ -1,27 +1,48 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/Home.vue'
-import SignUp from '../views/SignUp.vue'
-import Success_SignUp from '../views/Success_SignUp.vue'
-import ArticleList from '/src/views/ArticleList.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import Home from "/src/views/Home.vue";
+import ArticleCreate from "/src/views/ArticleCreate.vue";
+import ArticleList from "/src/views/ArticleList.vue";
+import SignUp from "/src/views/SignUp.vue";
+import EditProfile from "/src/views/EditProfile.vue";
+import MyProfile from "/src/views/MyProfile.vue";
 
 const routes = [
-    {
-       path: '/',
-       redirect: '/articlelist',
-    }, 
-    {
-      path: '/articlelist',
-      component: ArticleList,
-    },
-    {
-      path: '/signup',
-      component: SignUp,
-    },
-]
+  {
+    path: "/",
+    redirect: "/home",
+  },
+  {
+    path: "/home",
+    component: Home,
+  },
+  {
+    path: "/creer-annonce",
+    component: ArticleCreate,
+  },
+  {
+    path: "/articlelist",
+    component: ArticleList,
+  },
+  {
+    path: "/signup",
+    component: SignUp,
+  },
+  {
+    path: "/edit_profile/:userId",
+    component: EditProfile,
+    props: true,
+  },
+
+  {
+    path: "/myprofile",
+    component: MyProfile,
+    props: true,
+  },
+];
 
 const router = createRouter({
-    history: createWebHistory('/'),
-    routes
- })
- 
- export default router
+  history: createWebHistory("/"),
+  routes,
+});
+
+export default router;
