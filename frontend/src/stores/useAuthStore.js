@@ -26,5 +26,21 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  return { user, fetchUser };
+  // User logout
+  async function logout() {
+    try {
+      const response = await fetch("/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        user.value = null;
+      }
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion :", error);
+    }
+  }
+
+  return { user, fetchUser, logout };
 });
