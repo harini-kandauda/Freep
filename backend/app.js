@@ -2,13 +2,19 @@ import express from "express";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+// Sessions UUIDs
+import crypto from "crypto";
+// Cookie parser
+import cookieParser from "cookie-parser";
 
 const app = express();
 dotenv.config();
 const prisma = new PrismaClient();
-app.use(express.json());
 
 /////////////////// MIDDLEWARES ///////////////////
+
+app.use(express.json());
+app.use(cookieParser());
 
 // Create Article
 app.post("/api/create_article", async (req, res) => {
@@ -153,6 +159,57 @@ app.post("/api/signup", async (req, res) => {
     }
   } else {
     res.sendStatus(403);
+  }
+});
+
+// User authentication
+
+app.post("/auth/authenticate_user", async (req, res) => {
+  const { email, password } = req.body;
+  const existingUser = await prisma.user.findUnique({
+    where: { email },
+  });
+  if (existingUser) {
+    if (await bcrypt.compare(password, existingUser.password)) {
+      const uuid = crypto.randomUUID();
+      const session = await prisma.session.create({
+        data: { session_id: uuid, user_id: existingUser.id },
+      });
+      res.cookie("auth_user_session_id", session.session_id, {
+        httpOnly: true,
+        maxAge: 30 * 60 * 1000,
+      });
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(403);
+    }
+  } else {
+    res.sendStatus(404);
+  }
+});
+
+// Get user from session id
+
+app.get("/auth/get_user", async (req, res) => {
+  const session_id = req.cookies.auth_user_session_id;
+  if (session_id) {
+    try {
+      const session = await prisma.session.findUnique({
+        where: { session_id: session_id },
+        include: { user: true },
+      });
+      if (session) {
+        console.log("Mon petit user: ", session.user);
+        return res.status(200).json({ user: session.user });
+      } else {
+        return res.sendStatus(402);
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur serveur" });
+    }
+  } else {
+    return res.sendStatus(403);
   }
 });
 
