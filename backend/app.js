@@ -2,23 +2,37 @@ import express from "express";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+// Sessions UUIDs
+import crypto from "crypto";
+// Cookie parser
+import cookieParser from "cookie-parser";
 
 const app = express();
 dotenv.config();
 const prisma = new PrismaClient();
-app.use(express.json());
 
 /////////////////// MIDDLEWARES ///////////////////
+
+app.use(express.json());
+app.use(cookieParser());
 
 // Create Article
 app.post("/api/create_article", async (req, res) => {
   console.log("req", req);
-  const { title, desc } = req.body;
+  const { title, desc, type, size, gender, state, image } = req.body;
 
-  const newArticle = await prisma.Clothing.create({
+  const newArticle = await prisma.clothing.create({
     data: {
       name: title,
       description: desc,
+      size: size,
+      type: type,
+      genders: gender,
+      state: state,
+      pictures: {
+        create: [{url : image}]
+      },
+      user: {connect: {id : 4}}
     },
   });
   console.log("New article : ", newArticle);
@@ -27,14 +41,103 @@ app.post("/api/create_article", async (req, res) => {
 
 // List Articles
 app.get("/api/clothing", async (req, res) => {
-  const clothingData = await prisma.clothing.findMany({
-    include: {
-      user: true,
-      pictures: true,
-    },
-  });
-  res.json(clothingData);
-});
+  try {
+    const {
+      type,
+      size,
+      genders,
+      state,
+      page =1,
+      limit = 10,
+    } = req.query;
+
+    const pageInt = parseInt(page);
+    const limitInt = parseInt(limit);
+
+    let filters = {};
+
+    if (type) {
+      filters.type = type; 
+    }
+
+    if (size) {
+      filters.size = size;
+    }
+
+    if (genders) {
+      filters.genders = genders;
+    }
+
+    if (state) {
+      filters.state = state;
+    }
+
+    console.log("Filters envoyés à Prisma:", filters);
+    console.log("Type:", type);
+    console.log("Size:", size);
+    console.log("Genders:", genders);
+    console.log("State:", state);
+    const totalClothingFilters = await prisma.clothing.count({
+      where: filters,
+    })
+
+    const totalPages = Math.ceil(totalClothingFilters / limitInt)
+    
+    const clothingList = await prisma.clothing.findMany({
+      where: filters,
+      skip: (pageInt -1) * limitInt,
+      take: limitInt,
+      include: {
+        user: true,
+        pictures: true, // 🔥 Inclure l'utilisateur lié à l'article
+      },
+    });
+
+    res.status(200).json({
+      clothingList,
+      totalClothingFilters,
+      totalPages,
+      currentPage: pageInt,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({error: "Erreur lors de la récupération des articles"});
+  }
+})
+
+// Dressing
+
+// List clothing
+app.get("/api/dressing", async (req, res) => {
+  try {
+    const userId = 1; // à remplacer par notre méthode de récupération de l'user id
+
+    const userClothing = await prisma.clothing.findMany({
+      where: { user_id: userId },
+      include: {
+        user: true,
+        pictures: true,
+      },  
+    });
+    res.status(200).json(userClothing);
+  } catch (error) {
+    res.status(500).json({error: "Erreur serveur"});
+  }});
+
+// Delete clothing
+app.delete("api/dressing/:clothingId", async (req, res) => {
+  try {
+    const { clothingId } = req.params;
+
+    await prisma.clothing.delete({
+      where: { id: parseInt(clothingId)}
+    });
+    res.status(200).json({ message: "Article supprimé"});
+  } catch (error) {
+    console.error("Erreur lors de la suppression", error);
+    res.status(500).json({error: "Erreur serveur" });
+  }
+  })
 
 // Create account
 app.post("/api/signup", async (req, res) => {
@@ -56,6 +159,57 @@ app.post("/api/signup", async (req, res) => {
     }
   } else {
     res.sendStatus(403);
+  }
+});
+
+// User authentication
+
+app.post("/auth/authenticate_user", async (req, res) => {
+  const { email, password } = req.body;
+  const existingUser = await prisma.user.findUnique({
+    where: { email },
+  });
+  if (existingUser) {
+    if (await bcrypt.compare(password, existingUser.password)) {
+      const uuid = crypto.randomUUID();
+      const session = await prisma.session.create({
+        data: { session_id: uuid, user_id: existingUser.id },
+      });
+      res.cookie("auth_user_session_id", session.session_id, {
+        httpOnly: true,
+        maxAge: 30 * 60 * 1000,
+      });
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(403);
+    }
+  } else {
+    res.sendStatus(404);
+  }
+});
+
+// Get user from session id
+
+app.get("/auth/get_user", async (req, res) => {
+  const session_id = req.cookies.auth_user_session_id;
+  if (session_id) {
+    try {
+      const session = await prisma.session.findUnique({
+        where: { session_id: session_id },
+        include: { user: true },
+      });
+      if (session) {
+        console.log("Mon petit user: ", session.user);
+        return res.status(200).json({ user: session.user });
+      } else {
+        return res.sendStatus(402);
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur serveur" });
+    }
+  } else {
+    return res.sendStatus(403);
   }
 });
 

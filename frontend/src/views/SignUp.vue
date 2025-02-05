@@ -35,13 +35,11 @@
 <script setup>
 import { ref } from "vue";
 import router from "../router";
-import { host } from "../use/useHost";
 
 const errorMessage = ref("");
 const formData = ref({});
 
 async function signupUser() {
-  host.value = formData.value.email;
   const response = await fetch("/api/signup", {
     method: "POST",
     headers: {
@@ -51,10 +49,12 @@ async function signupUser() {
   });
 
   if (response.status === 200) {
-    router.push("/articlelist");
+    router.push("/article_list");
   } else {
     if (response.status === 400) {
-      errorMessage.value = "Cet email est déjà utilisé";
+      errorMessage.value = "Cet email est déjà utilisé.";
+    } else if (response.status === 403) {
+      errorMessage.value = "Les mots de passe sont différents."
     } else {
       errorMessage.value = "Erreur";
     }
@@ -62,7 +62,7 @@ async function signupUser() {
 }
 </script>
 
-<style>
+<style scoped>
 form {
   display: flex;
   flex-direction: column;

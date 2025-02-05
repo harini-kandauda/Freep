@@ -57,7 +57,10 @@
 
       <br />
       <!-- <p>Pour finaliser la modification de votre profil, cliquez sur "Mettre à jour"</p> -->
-      <div class="Mettreà jour">
+      <div class="Mettre à jour">
+        <p v-if="successMessage" class="popup">
+          <b> {{ successMessage }} </b>
+        </p>
         <button type="submit" class="large-button">Mettre à jour</button>
         <br />
       </div>
@@ -74,6 +77,7 @@ import { ref, onMounted } from "vue";
 import router from "../router";
 
 const error_message = ref("");
+const successMessage = ref("");
 const formData = ref({});
 
 //Fonction utilisant fetch pour récupérer les données
@@ -120,8 +124,12 @@ async function editUser() {
     });
 
     if (response.ok) {
-      // Rediriger vers la page profil
-      router.push("/myprofile");
+      // Rediriger vers la page d'articles
+      successMessage.value = "Profil mis à jour avec succès !";
+      setTimeout(() => {
+        router.push("/article_list");
+      }, 2000);
+
     } else {
       const errorText = await response.text();
       console.error("Error response:", errorText);
