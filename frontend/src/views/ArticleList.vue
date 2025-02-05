@@ -1,6 +1,6 @@
 <template>
   <router-link to="/edit_profile/">Éditer mon profil</router-link>
-  <router-link to="/creer-annonce">Créer un article</router-link>
+  <router-link to="/create_article">Créer un article</router-link>
   <h1>Liste des articles</h1>
   <table>
     <thead>
@@ -23,7 +23,7 @@
         </td>
         <td>{{ clothing.name }}</td>
         <td>{{ clothing.description }}</td>
-        <!-- <td>{{ clothing.user.full_name }}</td> -->
+        <td>{{ clothing.user.full_name }}</td>
       </tr>
     </tbody>
   </table>
@@ -43,6 +43,6 @@ onMounted(() => {
     });
 });
 function goToCreateArticle() {
-  this.$router.push("/create-article");
+  this.$router.push("/create_article");
 }
 </script>

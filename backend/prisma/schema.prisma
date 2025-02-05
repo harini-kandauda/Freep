@@ -41,12 +41,12 @@ model Clothing {
   user_id     Int
   pictures    Picture[]
   description String?
-  // type         String?// enum
-  // size         String?// // enum
+  type         String?// enum
+  size         String?// // enum
+  genders      String?//Gender[]
+  state        String?
   // themes       String?// Theme[]
-  // genders      String?//Gender[]
   // brand        Brand // enum
-  // state        ClothingState
   // availability Boolean
   // lend_start   DateTime
   // lend_end     DateTime

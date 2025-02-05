@@ -23,7 +23,10 @@ app.post("/api/create_article", async (req, res) => {
       type: type,
       genders: gender,
       state: state,
-      image: image,
+      pictures: {
+        create: [{url : image}]
+      },
+      user: {connect: {id : 4}}
     },
   });
   console.log("New article : ", newArticle);

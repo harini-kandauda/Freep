@@ -29,12 +29,12 @@
         name="article_image"
         v-model="formData.image"
         placeholder="https://example.com"
-        pattern="https://.*"
+        required
       />
     </div>
     <div>
       <label for="article_desc">Description</label>
-      <textarea name="article_desc" v-model="formData.desc" rows="5"></textarea>
+      <textarea name="article_desc" v-model="formData.desc" rows="5" required></textarea>
     </div>
     <div>
       <label for="article_gender">Genre</label>
@@ -91,7 +91,7 @@ async function createArticle() {
 
   if (response.status === 200) {
     console.log("Youpi !");
-    router.push("/articlelist");
+    router.push("/article_list");
   } else {
     errorMessage.value = "Oups...";
   }
