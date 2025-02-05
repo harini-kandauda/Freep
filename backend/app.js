@@ -217,11 +217,11 @@ app.put("/api/dressing/:clothingId", async (req, res) => {
   try {
     const updatedClothing = await prisma.clothing.update({
       where: { id: clothindId },
-      data: {name, description, type, size, genders, state },
+      data: { name, description, type, size, genders, state },
     });
     res.json(updatedClothing);
   } catch (error) {
-    res.status(500).json({ error: "Erreur lors de la mise à jour"});
+    res.status(500).json({ error: "Erreur lors de la mise à jour" });
   }
 });
 
@@ -229,7 +229,7 @@ app.put("/api/dressing/:clothingId", async (req, res) => {
 
 app.post("/api/edit_profile", async (req, res) => {
   console.log("editer :", req.body);
-  const { email, password, password2, full_name, avatar_url } = req.body;
+  const { id, email, password, password2, full_name } = req.body;
 
   if (password !== password2) {
     return res.status(400).json({
@@ -268,20 +268,20 @@ app.post("/api/edit_profile", async (req, res) => {
 });
 
 // Route GET pour récupérer un utilisateur par son ID
-// app.get("/api/user/:id", async (req, res) => {
-//   const { id } = req.params;
-//   try {
-//     const user = await prisma.user.findUnique({
-//       where: { id: parseInt(id) }, // Conversion de l'id en entier
-//     });
-//     if (!user) {
-//       return res.status(404).json({ error: "Utilisateur non trouvéééé" });
-//     }
-//     res.json(user);
-//   } catch (error) {
-//     res.status(500).json({ error: "Erreur serveur", details: error.message });
-//   }
-// });
+app.get("/api/user/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(id) }, // Conversion de l'id en entier
+    });
+    if (!user) {
+      return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Erreur serveur", details: error.message });
+  }
+});
 
 ////////////////////////////////////////
 
