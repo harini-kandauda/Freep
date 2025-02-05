@@ -127,7 +127,7 @@ async function editUser() {
       // Rediriger vers la page d'articles
       successMessage.value = "Profil mis à jour avec succès !";
       setTimeout(() => {
-        router.push("/articlelist");
+        router.push("/article_list");
       }, 2000);
 
     } else {
