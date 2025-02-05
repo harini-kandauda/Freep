@@ -22,6 +22,7 @@ export const useAuthStore = defineStore("auth", () => {
       user.value = data.user;
     } catch (error) {
       console.error("Erreur lors de la récupération de l'utilisateur :", error);
+      user.value = null;
     }
   }
 
