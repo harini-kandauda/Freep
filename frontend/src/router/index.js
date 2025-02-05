@@ -8,7 +8,6 @@ import MyProfile from "/src/views/MyProfile.vue";
 import SignIn from "/src/views/SignIn.vue";
 import Dressing from "/src/views/Dressing.vue";
 
-
 const routes = [
   {
     path: "/",
@@ -35,7 +34,7 @@ const routes = [
     component: SignIn,
   },
   {
-    path: "/edit_profile/:userId",
+    path: "/edit_profile",
     component: EditProfile,
     props: true,
   },

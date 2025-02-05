@@ -2,6 +2,7 @@
   <div v-if="authStore.user">
     <p>Bienvenue, {{ authStore.user.full_name }} !</p>
     <button @click="handleLogout">Déconnexion</button>
+    <button @click="handleEditProfile">Éditer mon profil</button>
   </div>
 </template>
 
@@ -16,6 +17,14 @@ async function handleLogout() {
   await authStore.logout();
   router.push("/home");
 }
+
+function handleEditProfile() {
+  router.push("/edit_profile");
+}
 </script>
 
-<style scoped></style>
+<style scoped>
+button {
+  margin: 6px;
+}
+</style>

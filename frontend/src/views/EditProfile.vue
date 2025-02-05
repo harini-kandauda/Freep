@@ -129,7 +129,6 @@ async function editUser() {
       setTimeout(() => {
         router.push("/article_list");
       }, 2000);
-
     } else {
       const errorText = await response.text();
       console.error("Error response:", errorText);
