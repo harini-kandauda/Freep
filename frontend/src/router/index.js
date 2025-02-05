@@ -6,6 +6,8 @@ import SignUp from "/src/views/SignUp.vue";
 import EditProfile from "/src/views/EditProfile.vue";
 import MyProfile from "/src/views/MyProfile.vue";
 import SignIn from "/src/views/SignIn.vue";
+import Dressing from "/src/views/Dressing.vue";
+
 
 const routes = [
   {
@@ -17,11 +19,11 @@ const routes = [
     component: Home,
   },
   {
-    path: "/creer-annonce",
+    path: "/create_article",
     component: ArticleCreate,
   },
   {
-    path: "/articlelist",
+    path: "/article_list",
     component: ArticleList,
   },
   {
@@ -41,6 +43,11 @@ const routes = [
   {
     path: "/myprofile",
     component: MyProfile,
+    props: true,
+  },
+  {
+    path: "/dressing",
+    component: Dressing,
     props: true,
   },
 ];
