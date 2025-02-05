@@ -72,11 +72,11 @@ app.get("/api/clothing", async (req, res) => {
       filters.state = state;
     }
 
-    console.log("Filters envoyés à Prisma:", filters);
-    console.log("Type:", type);
-    console.log("Size:", size);
-    console.log("Genders:", genders);
-    console.log("State:", state);
+    // console.log("Filters envoyés à Prisma:", filters);
+    // console.log("Type:", type);
+    // console.log("Size:", size);
+    // console.log("Genders:", genders);
+    // console.log("State:", state);
     const totalClothingFilters = await prisma.clothing.count({
       where: filters,
     })
@@ -89,7 +89,7 @@ app.get("/api/clothing", async (req, res) => {
       take: limitInt,
       include: {
         user: true,
-        pictures: true, // 🔥 Inclure l'utilisateur lié à l'article
+        pictures: true, // Inclure l'utilisateur lié à l'article
       },
     });
 
@@ -110,7 +110,7 @@ app.get("/api/clothing", async (req, res) => {
 // List clothing
 app.get("/api/dressing", async (req, res) => {
   try {
-    const userId = 1; // à remplacer par notre méthode de récupération de l'user id
+    const userId = 4; // à remplacer par notre méthode de récupération de l'user id
 
     const userClothing = await prisma.clothing.findMany({
       where: { user_id: userId },
@@ -125,7 +125,7 @@ app.get("/api/dressing", async (req, res) => {
   }});
 
 // Delete clothing
-app.delete("api/dressing/:clothingId", async (req, res) => {
+app.delete("/api/dressing/:clothingId", async (req, res) => {
   try {
     const { clothingId } = req.params;
 
@@ -138,6 +138,22 @@ app.delete("api/dressing/:clothingId", async (req, res) => {
     res.status(500).json({error: "Erreur serveur" });
   }
   })
+
+// Update clothing
+app.put("/api/dressing/:clothingId", async (req, res) => {
+  const clothingId = parseInt(req.params.clothingId);
+  const { name, description, type, size, genders, state } = req.body;
+
+  try {
+    const updatedClothing = await prisma.clothing.update({
+      where: { id: clothindId },
+      data: {name, description, type, size, genders, state },
+    });
+    res.json(updatedClothing);
+  } catch (error) {
+    res.status(500).json({ error: "Erreur lors de la mise à jour"});
+  }
+});
 
 // Create account
 app.post("/api/signup", async (req, res) => {
@@ -152,7 +168,7 @@ app.post("/api/signup", async (req, res) => {
       res.sendStatus(400);
     } else {
       const hashedPassword = await bcrypt.hash(password, 3);
-      const createUser = await prisma.User.create({
+      const createUser = await prisma.user.create({
         data: { full_name, email, password: hashedPassword },
       });
       res.sendStatus(200);
