@@ -26,7 +26,9 @@
                     <td>{{ clothing.name }}</td>
                     <td>{{ clothing.description }}</td>
                     <td>
-                        <button @click="updateClothing(clothing.id)">Modifier</button>
+                        <router-link :to="`/edit-clothing/${clothing.id}`">
+                            <button>Modifier</button>
+                        </router-link>
                         <button @click="deleteClothing(clothing.id)">Supprimer</button>
                     </td>
                 </tr>
@@ -40,7 +42,7 @@
 import { ref, onMounted } from "vue";
 
 const clothingList = ref([]);
-const userId = 1; // Remplacer par la varie méthode pour récupérer l'id utilisateur
+const userId = 4; // Remplacer par la varie méthode pour récupérer l'id utilisateur
 
 const fetchDressing = async () => {
     try {
@@ -53,13 +55,12 @@ const fetchDressing = async () => {
 }
 
 const deleteClothing = async (clothingId) => {
-    if (!confirm("Voulez-vous vraiement supprimer cet article ?")) return;
+    if (!confirm("Voulez-vous vraiment supprimer cet article ?")) return;
 
     try {
         const response = await fetch(`/api/dressing/${clothingId}`, {
             method: "DELETE",
         });
-
         if (response.ok) {
             clothingList.value = clothingList.value.filter(c => c.id !== clothingId);
             alert("Article supprimé avec succès !");
