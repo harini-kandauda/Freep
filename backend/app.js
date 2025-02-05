@@ -155,6 +155,20 @@ app.get("/auth/get_user", async (req, res) => {
 app.post("/api/create_article", async (req, res) => {
   console.log("req", req);
   const { title, desc, type, size, gender, state, image } = req.body;
+  const sessionId = req.cookies.auth_user_session_id;
+  // console.log('session ID reçu :', sessionId)
+
+  if (!sessionId) {
+    return res.status(401).send({ message: "Utilisateur non authentifié" });
+  }
+
+  const session = await prisma.session.findUnique({
+    where: { session_id: sessionId}
+  });
+
+  if (!session) {
+    return res.status(401).send({message: "Session invalide"});
+  }
 
   const newArticle = await prisma.clothing.create({
     data: {
@@ -167,7 +181,7 @@ app.post("/api/create_article", async (req, res) => {
       pictures: {
         create: [{ url: image }],
       },
-      user: { connect: { id: 4 } },
+      user: { connect: { id: session.user_id } },
     },
   });
   console.log("New article : ", newArticle);
@@ -268,20 +282,20 @@ app.post("/api/edit_profile", async (req, res) => {
 });
 
 // Route GET pour récupérer un utilisateur par son ID
-// app.get("/api/user/:id", async (req, res) => {
-//   const { id } = req.params;
-//   try {
-//     const user = await prisma.user.findUnique({
-//       where: { id: parseInt(id) }, // Conversion de l'id en entier
-//     });
-//     if (!user) {
-//       return res.status(404).json({ error: "Utilisateur non trouvéééé" });
-//     }
-//     res.json(user);
-//   } catch (error) {
-//     res.status(500).json({ error: "Erreur serveur", details: error.message });
-//   }
-// });
+app.get("/api/user/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(id) }, // Conversion de l'id en entier
+    });
+    if (!user) {
+      return res.status(404).json({ error: "Utilisateur non trouvéééé" });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Erreur serveur", details: error.message });
+  }
+});
 
 ////////////////////////////////////////
 
