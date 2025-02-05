@@ -1,6 +1,6 @@
 <template>
   <router-link to="/edit_profile/">Éditer mon profil</router-link>
-  <router-link to="/creer-annonce">Créer un article</router-link>
+  <router-link to="/create_article">Créer un article</router-link>
   <h1>Liste des articles</h1>
 
   <label>

@@ -18,11 +18,11 @@ const routes = [
     component: Home,
   },
   {
-    path: "/creer-annonce",
+    path: "/create_article",
     component: ArticleCreate,
   },
   {
-    path: "/articlelist",
+    path: "/article_list",
     component: ArticleList,
   },
   {
