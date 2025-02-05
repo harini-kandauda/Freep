@@ -30,9 +30,9 @@ app.post("/api/create_article", async (req, res) => {
       genders: gender,
       state: state,
       pictures: {
-        create: [{url : image}]
+        create: [{ url: image }],
       },
-      user: {connect: {id : 4}}
+      user: { connect: { id: 4 } },
     },
   });
   console.log("New article : ", newArticle);
@@ -42,14 +42,7 @@ app.post("/api/create_article", async (req, res) => {
 // List Articles
 app.get("/api/clothing", async (req, res) => {
   try {
-    const {
-      type,
-      size,
-      genders,
-      state,
-      page =1,
-      limit = 10,
-    } = req.query;
+    const { type, size, genders, state, page = 1, limit = 10 } = req.query;
 
     const pageInt = parseInt(page);
     const limitInt = parseInt(limit);
@@ -57,7 +50,7 @@ app.get("/api/clothing", async (req, res) => {
     let filters = {};
 
     if (type) {
-      filters.type = type; 
+      filters.type = type;
     }
 
     if (size) {
@@ -79,13 +72,13 @@ app.get("/api/clothing", async (req, res) => {
     console.log("State:", state);
     const totalClothingFilters = await prisma.clothing.count({
       where: filters,
-    })
+    });
 
-    const totalPages = Math.ceil(totalClothingFilters / limitInt)
-    
+    const totalPages = Math.ceil(totalClothingFilters / limitInt);
+
     const clothingList = await prisma.clothing.findMany({
       where: filters,
-      skip: (pageInt -1) * limitInt,
+      skip: (pageInt - 1) * limitInt,
       take: limitInt,
       include: {
         user: true,
@@ -101,9 +94,11 @@ app.get("/api/clothing", async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({error: "Erreur lors de la récupération des articles"});
+    res
+      .status(500)
+      .json({ error: "Erreur lors de la récupération des articles" });
   }
-})
+});
 
 // Dressing
 
@@ -117,12 +112,13 @@ app.get("/api/dressing", async (req, res) => {
       include: {
         user: true,
         pictures: true,
-      },  
+      },
     });
     res.status(200).json(userClothing);
   } catch (error) {
-    res.status(500).json({error: "Erreur serveur"});
-  }});
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
 
 // Delete clothing
 app.delete("api/dressing/:clothingId", async (req, res) => {
@@ -130,14 +126,14 @@ app.delete("api/dressing/:clothingId", async (req, res) => {
     const { clothingId } = req.params;
 
     await prisma.clothing.delete({
-      where: { id: parseInt(clothingId)}
+      where: { id: parseInt(clothingId) },
     });
-    res.status(200).json({ message: "Article supprimé"});
+    res.status(200).json({ message: "Article supprimé" });
   } catch (error) {
     console.error("Erreur lors de la suppression", error);
-    res.status(500).json({error: "Erreur serveur" });
+    res.status(500).json({ error: "Erreur serveur" });
   }
-  })
+});
 
 // Create account
 app.post("/api/signup", async (req, res) => {
@@ -199,7 +195,7 @@ app.get("/auth/get_user", async (req, res) => {
         include: { user: true },
       });
       if (session) {
-        console.log("Mon petit user: ", session.user);
+        // console.log("Mon petit user: ", session.user);
         return res.status(200).json({ user: session.user });
       } else {
         return res.sendStatus(402);

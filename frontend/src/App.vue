@@ -1,4 +1,7 @@
 <template>
-  <router-link to="/home">Accueil</router-link>
+  <Navigation />
   <router-view></router-view>
 </template>
+<script setup>
+import Navigation from "/src/components/Navigation.vue";
+</script>

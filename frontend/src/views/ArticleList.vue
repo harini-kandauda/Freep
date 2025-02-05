@@ -1,6 +1,4 @@
 <template>
-  <router-link to="/edit_profile/">Éditer mon profil</router-link>
-  <router-link to="/create_article">Créer un article</router-link>
   <h1>Liste des articles</h1>
 
   <label>
@@ -27,7 +25,7 @@
       <option value="XL">XL</option>
       <option value="XXL">XXL</option>
     </select>
-  </label> 
+  </label>
 
   <label>
     Genre :
@@ -37,7 +35,7 @@
       <option value="Homme">Homme</option>
       <option value="Unisex">Unisexe</option>
     </select>
-  </label> 
+  </label>
 
   <label>
     Etat :
@@ -50,7 +48,7 @@
       <option value="Usé">Usé</option>
       <option value="Abimé">Abimé</option>
     </select>
-  </label> 
+  </label>
 
   <table>
     <thead>
@@ -80,13 +78,14 @@
     </tbody>
   </table>
 
-   <!-- Pagination -->
-   <div>
-      <button :disabled="currentPage === 1" @click="prevPage">Précédent</button>
-      <span>Page {{ currentPage }} sur {{ totalPages }}</span>
-      <button :disabled="currentPage === totalPages" @click="nextPage">Suivant</button>
-    </div>
-
+  <!-- Pagination -->
+  <div>
+    <button :disabled="currentPage === 1" @click="prevPage">Précédent</button>
+    <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+    <button :disabled="currentPage === totalPages" @click="nextPage">
+      Suivant
+    </button>
+  </div>
 </template>
 
 <script setup>
@@ -105,7 +104,6 @@ const totalClothingFilters = ref(0);
 // number of articles per page
 const limit = ref(10);
 
-
 const fetchClothing = async () => {
   const queryParams = new URLSearchParams({
     type: type.value,
@@ -113,26 +111,25 @@ const fetchClothing = async () => {
     genders: genders.value,
     state: state.value,
     page: currentPage.value,
-    limit: limit.value
+    limit: limit.value,
   });
 
-    const response = await fetch(`/api/clothing?${queryParams}`);
-    const data = await response.json();
+  const response = await fetch(`/api/clothing?${queryParams}`);
+  const data = await response.json();
 
-    clothingList.value = data.clothingList;
-    totalPages.value = data.totalPages;
-    totalClothingFilters.value = data.totalClothingFilters;
+  clothingList.value = data.clothingList;
+  totalPages.value = data.totalPages;
+  totalClothingFilters.value = data.totalClothingFilters;
 };
 
-watch([type, size, genders, state], fetchClothing, {immediate: true});
-
+watch([type, size, genders, state], fetchClothing, { immediate: true });
 
 const nextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++;
     fetchClothing();
   }
-}
+};
 
 const prevPage = () => {
   if (currentPage.value > 1) {
@@ -142,5 +139,4 @@ const prevPage = () => {
 };
 
 onMounted(fetchClothing);
-
 </script>
