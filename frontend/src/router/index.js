@@ -5,6 +5,8 @@ import ArticleList from "/src/views/ArticleList.vue";
 import SignUp from "/src/views/SignUp.vue";
 import EditProfile from "/src/views/EditProfile.vue";
 import MyProfile from "/src/views/MyProfile.vue";
+import Dressing from "/src/views/Dressing.vue";
+
 
 const routes = [
   {
@@ -36,6 +38,11 @@ const routes = [
   {
     path: "/myprofile",
     component: MyProfile,
+    props: true,
+  },
+  {
+    path: "/dressing",
+    component: Dressing,
     props: true,
   },
 ];
