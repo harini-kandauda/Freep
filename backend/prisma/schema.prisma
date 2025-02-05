@@ -13,13 +13,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Session {
+  id         Int    @id @default(autoincrement())
+  session_id String @unique
+  user_id    Int
+  user       User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
 model User {
-  id                   Int            @id @default(autoincrement())
-  full_name            String?
-  email                String?         @unique
-  password             String?
-  dressing             Clothing[]
-  avatar_url           String?
+  id         Int        @id @default(autoincrement())
+  full_name  String?
+  email      String?    @unique
+  password   String?
+  dressing   Clothing[]
+  avatar_url String?
+  sessions   Session[]
   // zip_code             Int
   // credit_card          String? // Object type to specify
   // dressing             Dressing[]  // favorite_clothes     Clothing[]
@@ -37,8 +45,8 @@ model User {
 model Clothing {
   id          Int       @id @default(autoincrement())
   name        String?
-  user        User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id     Int
+  user        User?     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id     Int?
   pictures    Picture[]
   description String?
   // type         String?// enum

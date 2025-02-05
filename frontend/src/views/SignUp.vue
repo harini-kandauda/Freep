@@ -35,13 +35,11 @@
 <script setup>
 import { ref } from "vue";
 import router from "../router";
-import { host } from "../use/useHost";
 
 const errorMessage = ref("");
 const formData = ref({});
 
 async function signupUser() {
-  host.value = formData.value.email;
   const response = await fetch("/api/signup", {
     method: "POST",
     headers: {
@@ -62,7 +60,7 @@ async function signupUser() {
 }
 </script>
 
-<style>
+<style scoped>
 form {
   display: flex;
   flex-direction: column;
