@@ -166,10 +166,6 @@ app.post("/api/create_article", async (req, res) => {
     where: { session_id: sessionId}
   });
 
-  if (!session) {
-    return res.status(401).send({message: "Session invalide"});
-  }
-
   const newArticle = await prisma.clothing.create({
     data: {
       name: title,
