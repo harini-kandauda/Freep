@@ -16,7 +16,7 @@
     </p>
     <button type="submit">Valider</button>
   </form>
-  <p v-if="errorMessage">{{ errorMessage.value }}</p>
+  <p v-if="errorMessage">{{ errorMessage }}</p>
 </template>
 
 <script setup>
@@ -40,8 +40,10 @@ async function authenticateUser() {
   if (response.status === 200) {
     await authStore.fetchUser();
     router.push("/myprofile");
+  } else if (response.status === 401) {
+    errorMessage.value = "Mot de passe incorrect";
   } else {
-    errorMessage.value = "email ou mot de passe incorrect";
+    errorMessage.value = "Email ou mot de passe incorrect";
   }
 }
 </script>

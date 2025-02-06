@@ -9,7 +9,9 @@
   <router-link class="lnk" to="/signup" v-if="authStore.user === null"
     >Créer un compte</router-link
   >
-  <router-link class="lnk" to="/signin">S'identifier</router-link>
+  <router-link class="lnk" to="/signin" v-if="authStore.user === null"
+    >S'identifier</router-link
+  >
   <router-link class="lnk" to="/myprofile" v-if="authStore.user"
     >Voir mon profil</router-link
   >
