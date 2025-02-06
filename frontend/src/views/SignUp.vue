@@ -49,7 +49,7 @@ async function signupUser() {
   });
 
   if (response.status === 200) {
-    router.push("/article_list");
+    router.push("/signin");
   } else {
     if (response.status === 400) {
       errorMessage.value = "Cet email est déjà utilisé.";
