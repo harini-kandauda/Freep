@@ -77,6 +77,114 @@ app.get("/api/clothing", async (req, res) => {
   }
 });
 
+// Dressing
+
+// List clothing
+app.get("/api/dressing", async (req, res) => {
+  try {
+  
+    const sessionId = req.cookies.auth_user_session_id;
+    console.log('session ID reçu :', sessionId)
+
+  if (!sessionId) {
+    return res.status(401).send({ message: "Utilisateur non authentifié" });
+  }
+
+  const session = await prisma.session.findUnique({
+    where: { session_id: sessionId}
+  });
+
+  
+  const userClothing = await prisma.clothing.findMany({
+    where: { user_id: session.user_id },
+    include: {
+      user: true,
+      pictures: true,
+    },
+  });
+  res.status(200).json(userClothing);
+  } catch (error) {
+  res.status(500).json({ error: "Erreur serveur" });
+  }
+  });
+
+app.get("/api/dressing/:clothingId", async (req, res) => {
+  try {
+    const clothingId = parseInt(req.params.clothingId);
+    if (isNaN(clothingId)) {
+      return res.status(400).json({ error: "ID invalide" });
+    }
+
+    const clothing = await prisma.clothing.findUnique({
+      where: { id: clothingId },
+      include: {
+        user: true,
+        pictures: true,
+      },
+    });
+
+    if (!clothing) {
+      return res.status(404).json({ error: "Article non trouvé" });
+    }
+
+    res.json(clothing);
+  } catch (error) {
+    console.error("Erreur lors de la récupération:", error);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+// Delete clothing
+app.delete("/api/dressing/:clothingId", async (req, res) => {
+  try {
+    const { clothingId } = req.params;
+
+    await prisma.clothing.delete({
+      where: { id: parseInt(clothingId) },
+    });
+    res.status(200).json({ message: "Article supprimé" });
+  } catch (error) {
+    console.error("Erreur lors de la suppression", error);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+// Update clothing
+app.put("/api/dressing/:clothingId", async (req, res) => {
+  const clothingId = parseInt(req.params.clothingId);
+  const { name, description, type, size, genders, state, pictures } = req.body;
+
+  console.log("Requête PUT pour modifier l'article");
+  console.log("ID de l'article :", clothingId);
+  console.log("Données reçues :", req.body);
+
+  try {
+    const updatedClothing = await prisma.clothing.update({
+      where: { id: clothingId },
+      data: { name, 
+              description, 
+              type, 
+              size, 
+              genders, 
+              state,
+              pictures: {
+                update : pictures.map((picture) => ({
+                  where: { id: picture.id },
+                  data: { url: picture.url },
+                })),
+              }
+             },
+             include: { pictures: true },
+    });
+    console.log('updatedClothing', updatedClothing)
+
+    res.status(200).json(updatedClothing);
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: "Erreur lors de la mise à jour"});
+  }
+});
+
 // Create account
 app.post("/api/signup", async (req, res) => {
   const { full_name, email, password, password2 } = req.body;
