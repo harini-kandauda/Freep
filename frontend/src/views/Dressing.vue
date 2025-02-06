@@ -48,9 +48,10 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useAuthStore } from "/src/stores/useAuthStore";
 
 const clothingList = ref([]);
-const userId = 4; // Remplacer par la varie méthode pour récupérer l'id utilisateur
+const userAuth = useAuthStore(); // Remplacer par la varie méthode pour récupérer l'id utilisateur
 
 const fetchDressing = async () => {
     try {

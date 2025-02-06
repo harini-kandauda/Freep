@@ -31,18 +31,23 @@
       </div>
 
       <div>
-        <label>
-        Image actuelle :
-        <img v-if="clothing.pictures && clothing.pictures.length" 
+        <label>Image actuelle :</label>
+        <div v-if="clothing.pictures && clothing.pictures.length">
+            <img 
             :src="clothing.pictures[0].url" 
             alt="Image de l'article" 
-            width="150" height="150" />
-        </label>
+            width="150" height="150"
+            />
+        </div>
+        <p v-else>Aucune image disponible.</p>
 
-        <label>
-        Modifier l'URL de l'image :
-        <input type="text" v-model="imageUrl" placeholder="Nouvelle URL de l'image" />
-        </label>
+        <div v-for="(picture, index) in clothing.pictures" :key="index">
+            <label>URL de l'image {{ index + 1 }} :</label>
+            <input v-model="picture.url" type="text" placeholder="Modifier l'URL de l'image" />
+        </div>
+
+        <label>Nouvelle URL de l'image :</label>
+        <input type="text" v-model="newImageUrl" placeholder="Entrez une nouvelle URL" />
       </div>
       
       <div>
@@ -104,17 +109,19 @@
   });
   
   const imageUrl = ref("");
+  const imageId = ref();
 
   // Charger l'article existant
   const fetchClothing = async () => {
     try {
-      const response = await fetch(`/api/dressing/${clothingId.value}`);
-      const data = await response.json();
-      clothing.value = data;
-    
-      if (data.pictures.length > 0) {
-      imageUrl.value = data.pictures[0].url;
-    }
+        const response = await fetch(`/api/dressing/${clothingId.value}`);
+        const data = await response.json();
+        clothing.value = data;
+        
+        if (data.pictures.length > 0) {
+            imageUrl.value = data.pictures[0].url;
+            imageId.value = data.pictures[0].id;
+        }
 
     } catch (error) {
       console.error("Erreur lors du chargement:", error);
@@ -123,26 +130,31 @@
   
   //Mettre à jour l'article
   const updateClothing = async () => {
-    try {
-      const response = await fetch(`/api/dressing/${clothingId.value}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            ...clothing.value, 
-            imageUrl: imageUrl.value, 
-            }),
-      });
-      console.log("response:",response)
-      if (response.ok) {
-        alert("Article mis à jour !");
-        router.push("/dressing");
-      } else {
-        alert("Erreur lors de la mise à jour.");
-      }
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour:", error);
+  try {
+    const response = await fetch(`/api/dressing/${clothingId.value}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: clothing.value.name,
+        description: clothing.value.description,
+        type: clothing.value.type,
+        size: clothing.value.size,
+        genders: clothing.value.genders,
+        state: clothing.value.state,
+        pictures: clothing.value.pictures, // Envoyer les images sous forme de tableau
+      }),
+    });
+
+    if (response.ok) {
+      alert("Article mis à jour !");
+      router.push("/dressing"); // Redirige vers la page Dressing
+    } else {
+      alert("Erreur lors de la mise à jour.");
     }
-  };
-  
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour:", error);
+    alert("Erreur serveur lors de la mise à jour");
+  }
+};
   onMounted(fetchClothing);
   </script>
