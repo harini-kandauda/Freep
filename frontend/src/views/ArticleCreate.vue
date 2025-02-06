@@ -6,12 +6,12 @@
       <input
         type="text"
         name="article_title"
-        v-model="formData.title"
+        v-model="formData.name"
         required
       />
     </div>
     <div>
-      <label for="article_size">Type</label>
+      <label for="article_type">Type</label>
       <select v-model="formData.type" required>
         <option disabled value="">Veuillez sélectionner un type</option>
         <option value="Hauts">Hauts</option>
@@ -76,8 +76,10 @@
 <script setup>
 import { ref } from "vue";
 import router from "../router";
+import { useAuthStore } from "/src/stores/useAuthStore";
 
 // POST
+const authStore = useAuthStore();
 const formData = ref({});
 const errorMessage = ref("");
 
@@ -90,7 +92,6 @@ async function createArticle() {
   const response = await fetch("/api/create_article", request);
 
   if (response.status === 200) {
-    console.log("Youpi !");
     router.push("/article_list");
   } else {
     errorMessage.value = "Oups...";

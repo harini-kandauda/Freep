@@ -46,17 +46,6 @@
       </div>
 
       <br />
-      <div class="form-group mb-4">
-        <label for="avatar">Avatar (URL)</label>
-        <input
-          type="text"
-          v-model="formData.avatar_url"
-          placeholder="URL de votre avatar"
-        />
-      </div>
-
-      <br />
-      <!-- <p>Pour finaliser la modification de votre profil, cliquez sur "Mettre à jour"</p> -->
       <div class="Mettre à jour">
         <p v-if="successMessage" class="popup">
           <b> {{ successMessage }} </b>
@@ -73,46 +62,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watchEffect } from "vue";
 import router from "../router";
+import { useAuthStore } from "/src/stores/useAuthStore";
 
+const authStore = useAuthStore();
 const error_message = ref("");
 const successMessage = ref("");
 const formData = ref({});
 
-//Fonction utilisant fetch pour récupérer les données
-
-const fetchUser = async () => {
-  try {
-    const response = await fetch(`/api/user/${props.userId}`);
-
-    if (!response.ok) {
-      console.log("Utilisateur non trouvé");
-      return; // Exit the function if the user is not found
-    }
-
-    formData.value = await response.json();
-    console.log("Utilisateur récupéré:", formData.value);
-  } catch (error) {
-    console.error("Erreur lors de la récupération de l'utilisateur:", error);
+// Met à jour forData avec les infos du user
+watchEffect(() => {
+  if (authStore.user) {
+    formData.value = { ...authStore.user }; //Copie les données de l'utilisateur
   }
-};
-
-// définie ce qu'on récupére de la vue
-const props = defineProps({
-  userId: {
-    type: String,
-    required: true,
-  },
-});
-
-// définie ce qu'on envoie à la vue
-onMounted(async () => {
-  await fetchUser();
 });
 
 async function editUser() {
-  formData.value.userId = props.userId;
   console.log("Données envoyées au serveur:", formData.value);
   try {
     const response = await fetch("/api/edit_profile", {
@@ -126,6 +92,7 @@ async function editUser() {
     if (response.ok) {
       // Rediriger vers la page d'articles
       successMessage.value = "Profil mis à jour avec succès !";
+      authStore.fetchUser(); //Rafraîchit les infos de user
       setTimeout(() => {
         router.push("/article_list");
       }, 2000);
