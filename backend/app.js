@@ -16,40 +16,10 @@ const prisma = new PrismaClient();
 app.use(express.json());
 app.use(cookieParser());
 
-// Create Article
-app.post("/api/create_article", async (req, res) => {
-  console.log("req", req);
-  const { title, desc, type, size, gender, state, image } = req.body;
-
-  const newArticle = await prisma.clothing.create({
-    data: {
-      name: title,
-      description: desc,
-      size: size,
-      type: type,
-      genders: gender,
-      state: state,
-      pictures: {
-        create: [{url : image}]
-      },
-      user: {connect: {id : 4}}
-    },
-  });
-  console.log("New article : ", newArticle);
-  res.sendStatus(200);
-});
-
 // List Articles
 app.get("/api/clothing", async (req, res) => {
   try {
-    const {
-      type,
-      size,
-      genders,
-      state,
-      page =1,
-      limit = 10,
-    } = req.query;
+    const { type, size, genders, state, page = 1, limit = 10 } = req.query;
 
     const pageInt = parseInt(page);
     const limitInt = parseInt(limit);
@@ -57,7 +27,7 @@ app.get("/api/clothing", async (req, res) => {
     let filters = {};
 
     if (type) {
-      filters.type = type; 
+      filters.type = type;
     }
 
     if (size) {
@@ -72,24 +42,24 @@ app.get("/api/clothing", async (req, res) => {
       filters.state = state;
     }
 
-    console.log("Filters envoyés à Prisma:", filters);
-    console.log("Type:", type);
-    console.log("Size:", size);
-    console.log("Genders:", genders);
-    console.log("State:", state);
+    // console.log("Filters envoyés à Prisma:", filters);
+    // console.log("Type:", type);
+    // console.log("Size:", size);
+    // console.log("Genders:", genders);
+    // console.log("State:", state);
     const totalClothingFilters = await prisma.clothing.count({
       where: filters,
-    })
+    });
 
-    const totalPages = Math.ceil(totalClothingFilters / limitInt)
-    
+    const totalPages = Math.ceil(totalClothingFilters / limitInt);
+
     const clothingList = await prisma.clothing.findMany({
       where: filters,
-      skip: (pageInt -1) * limitInt,
+      skip: (pageInt - 1) * limitInt,
       take: limitInt,
       include: {
         user: true,
-        pictures: true, // 🔥 Inclure l'utilisateur lié à l'article
+        pictures: true, // Inclure l'utilisateur lié à l'article
       },
     });
 
@@ -101,43 +71,11 @@ app.get("/api/clothing", async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({error: "Erreur lors de la récupération des articles"});
+    res
+      .status(500)
+      .json({ error: "Erreur lors de la récupération des articles" });
   }
-})
-
-// Dressing
-
-// List clothing
-app.get("/api/dressing", async (req, res) => {
-  try {
-    const userId = 1; // à remplacer par notre méthode de récupération de l'user id
-
-    const userClothing = await prisma.clothing.findMany({
-      where: { user_id: userId },
-      include: {
-        user: true,
-        pictures: true,
-      },  
-    });
-    res.status(200).json(userClothing);
-  } catch (error) {
-    res.status(500).json({error: "Erreur serveur"});
-  }});
-
-// Delete clothing
-app.delete("api/dressing/:clothingId", async (req, res) => {
-  try {
-    const { clothingId } = req.params;
-
-    await prisma.clothing.delete({
-      where: { id: parseInt(clothingId)}
-    });
-    res.status(200).json({ message: "Article supprimé"});
-  } catch (error) {
-    console.error("Erreur lors de la suppression", error);
-    res.status(500).json({error: "Erreur serveur" });
-  }
-  })
+});
 
 // Create account
 app.post("/api/signup", async (req, res) => {
@@ -152,7 +90,7 @@ app.post("/api/signup", async (req, res) => {
       res.sendStatus(400);
     } else {
       const hashedPassword = await bcrypt.hash(password, 3);
-      const createUser = await prisma.User.create({
+      const createUser = await prisma.user.create({
         data: { full_name, email, password: hashedPassword },
       });
       res.sendStatus(200);
@@ -199,7 +137,7 @@ app.get("/auth/get_user", async (req, res) => {
         include: { user: true },
       });
       if (session) {
-        console.log("Mon petit user: ", session.user);
+        // console.log("Mon petit user: ", session.user);
         return res.status(200).json({ user: session.user });
       } else {
         return res.sendStatus(402);
@@ -213,11 +151,95 @@ app.get("/auth/get_user", async (req, res) => {
   }
 });
 
+// Create Article
+app.post("/api/create_article", async (req, res) => {
+  console.log("req", req);
+  const { title, desc, type, size, gender, state, image } = req.body;
+  const sessionId = req.cookies.auth_user_session_id;
+  // console.log('session ID reçu :', sessionId)
+
+  if (!sessionId) {
+    return res.status(401).send({ message: "Utilisateur non authentifié" });
+  }
+
+  const session = await prisma.session.findUnique({
+    where: { session_id: sessionId}
+  });
+
+  const newArticle = await prisma.clothing.create({
+    data: {
+      name: title,
+      description: desc,
+      size: size,
+      type: type,
+      genders: gender,
+      state: state,
+      pictures: {
+        create: [{ url: image }],
+      },
+      user: { connect: { id: session.user_id } },
+    },
+  });
+  console.log("New article : ", newArticle);
+  res.sendStatus(200);
+});
+
+// Dressing
+
+// List clothing
+app.get("/api/dressing", async (req, res) => {
+  try {
+    const userId = 4; // à remplacer par notre méthode de récupération de l'user id
+
+    const userClothing = await prisma.clothing.findMany({
+      where: { user_id: userId },
+      include: {
+        user: true,
+        pictures: true,
+      },
+    });
+    res.status(200).json(userClothing);
+  } catch (error) {
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+// Delete clothing
+app.delete("/api/dressing/:clothingId", async (req, res) => {
+  try {
+    const { clothingId } = req.params;
+
+    await prisma.clothing.delete({
+      where: { id: parseInt(clothingId) },
+    });
+    res.status(200).json({ message: "Article supprimé" });
+  } catch (error) {
+    console.error("Erreur lors de la suppression", error);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+// Update clothing
+app.put("/api/dressing/:clothingId", async (req, res) => {
+  const clothingId = parseInt(req.params.clothingId);
+  const { name, description, type, size, genders, state } = req.body;
+
+  try {
+    const updatedClothing = await prisma.clothing.update({
+      where: { id: clothindId },
+      data: { name, description, type, size, genders, state },
+    });
+    res.json(updatedClothing);
+  } catch (error) {
+    res.status(500).json({ error: "Erreur lors de la mise à jour" });
+  }
+});
+
 // Edit Profile
 
 app.post("/api/edit_profile", async (req, res) => {
   console.log("editer :", req.body);
-  const { email, password, password2, full_name, avatar_url } = req.body;
+  const { id, email, password, password2, full_name } = req.body;
 
   if (password !== password2) {
     return res.status(400).json({
@@ -241,7 +263,6 @@ app.post("/api/edit_profile", async (req, res) => {
       data: {
         full_name, // Mise à jour du nom complet
         password, // Mise à jour du mot de passe
-        avatar_url, // Mise à jour de l'avatar
       },
     });
     return res
@@ -263,7 +284,7 @@ app.get("/api/user/:id", async (req, res) => {
       where: { id: parseInt(id) }, // Conversion de l'id en entier
     });
     if (!user) {
-      return res.status(404).json({ error: "Utilisateur non trouvéééé" });
+      return res.status(404).json({ error: "Utilisateur non trouvé" });
     }
     res.json(user);
   } catch (error) {
