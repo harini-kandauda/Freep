@@ -286,7 +286,7 @@ app.post("/auth/logout", async (req, res) => {
 // Create Article
 app.post("/api/create_article", async (req, res) => {
   console.log("req", req);
-  const { title, desc, type, size, gender, state, image } = req.body;
+  const { name, desc, type, size, gender, state, image } = req.body;
   const sessionId = req.cookies.auth_user_session_id;
   // console.log('session ID reçu :', sessionId)
 
@@ -300,7 +300,7 @@ app.post("/api/create_article", async (req, res) => {
 
   const newArticle = await prisma.clothing.create({
     data: {
-      name: title,
+      name: name,
       description: desc,
       size: size,
       type: type,

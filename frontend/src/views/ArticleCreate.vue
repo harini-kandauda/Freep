@@ -2,10 +2,10 @@
   <h1>Créer une annonce</h1>
   <form @submit.prevent="createArticle" method="POST">
     <div>
-      <label for="article_title">Titre</label>
+      <label for="article_name">Titre</label>
       <input
         type="text"
-        name="article_title"
+        name="article_name"
         v-model="formData.name"
         required
       />
