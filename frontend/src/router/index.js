@@ -36,7 +36,7 @@ const routes = [
     component: SignIn,
   },
   {
-    path: "/edit_profile/:userId",
+    path: "/edit_profile/",
     component: EditProfile,
     props: true,
   },
