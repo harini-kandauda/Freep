@@ -253,7 +253,6 @@ app.post("/api/edit_profile", async (req, res) => {
       data: {
         full_name, // Mise à jour du nom complet
         password, // Mise à jour du mot de passe
-        avatar_url, // Mise à jour de l'avatar
       },
     });
     return res
