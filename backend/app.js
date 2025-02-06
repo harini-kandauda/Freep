@@ -227,11 +227,11 @@ app.put("/api/dressing/:clothingId", async (req, res) => {
   try {
     const updatedClothing = await prisma.clothing.update({
       where: { id: clothindId },
-      data: {name, description, type, size, genders, state },
+      data: { name, description, type, size, genders, state },
     });
     res.json(updatedClothing);
   } catch (error) {
-    res.status(500).json({ error: "Erreur lors de la mise à jour"});
+    res.status(500).json({ error: "Erreur lors de la mise à jour" });
   }
 });
 
@@ -239,7 +239,7 @@ app.put("/api/dressing/:clothingId", async (req, res) => {
 
 app.post("/api/edit_profile", async (req, res) => {
   console.log("editer :", req.body);
-  const { email, password, password2, full_name, avatar_url } = req.body;
+  const { id, email, password, password2, full_name } = req.body;
 
   if (password !== password2) {
     return res.status(400).json({
@@ -263,7 +263,6 @@ app.post("/api/edit_profile", async (req, res) => {
       data: {
         full_name, // Mise à jour du nom complet
         password, // Mise à jour du mot de passe
-        avatar_url, // Mise à jour de l'avatar
       },
     });
     return res
@@ -285,7 +284,7 @@ app.get("/api/user/:id", async (req, res) => {
       where: { id: parseInt(id) }, // Conversion de l'id en entier
     });
     if (!user) {
-      return res.status(404).json({ error: "Utilisateur non trouvéééé" });
+      return res.status(404).json({ error: "Utilisateur non trouvé" });
     }
     res.json(user);
   } catch (error) {
