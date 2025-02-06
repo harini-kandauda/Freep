@@ -56,6 +56,10 @@
         <th scope="col">Images</th>
         <th scope="col">Name</th>
         <th scope="col">Description</th>
+        <th scope="col">Type</th>
+        <th scope="col">Taille</th>
+        <th scope="col">Genre</th>
+        <th scope="col">Etat</th>
         <th scope="col">Utilisateur</th>
       </tr>
     </thead>
@@ -73,6 +77,10 @@
         </td>
         <td>{{ clothing.name }}</td>
         <td>{{ clothing.description }}</td>
+        <td>{{ clothing.type }}</td>
+        <td>{{ clothing.size }}</td>
+        <td>{{ clothing.genders }}</td>
+        <td>{{ clothing.state }}</td>
         <td>{{ clothing.user.full_name }}</td>
       </tr>
     </tbody>

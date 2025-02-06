@@ -8,6 +8,10 @@
                     <th>Image</th>
                     <th>Nom</th>
                     <th>Description</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Taille</th>
+                    <th scope="col">Genre</th>
+                    <th scope="col">Etat</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -25,8 +29,12 @@
                     </td>
                     <td>{{ clothing.name }}</td>
                     <td>{{ clothing.description }}</td>
+                    <td>{{ clothing.type }}</td>
+                    <td>{{ clothing.size }}</td>
+                    <td>{{ clothing.genders }}</td>
+                    <td>{{ clothing.state }}</td>
                     <td>
-                        <router-link :to="`/edit-clothing/${clothing.id}`">
+                        <router-link :to="`/edit_clothing/${clothing.id}`">
                             <button>Modifier</button>
                         </router-link>
                         <button @click="deleteClothing(clothing.id)">Supprimer</button>

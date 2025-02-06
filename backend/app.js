@@ -120,6 +120,32 @@ app.get("/api/dressing", async (req, res) => {
   }
 });
 
+app.get("/api/dressing/:clothingId", async (req, res) => {
+  try {
+    const clothingId = parseInt(req.params.clothingId);
+    if (isNaN(clothingId)) {
+      return res.status(400).json({ error: "ID invalide" });
+    }
+
+    const clothing = await prisma.clothing.findUnique({
+      where: { id: clothingId },
+      include: {
+        user: true,
+        pictures: true,
+      },
+    });
+
+    if (!clothing) {
+      return res.status(404).json({ error: "Article non trouvé" });
+    }
+
+    res.json(clothing);
+  } catch (error) {
+    console.error("Erreur lors de la récupération:", error);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
 // Delete clothing
 app.delete("/api/dressing/:clothingId", async (req, res) => {
   try {
@@ -138,13 +164,25 @@ app.delete("/api/dressing/:clothingId", async (req, res) => {
 // Update clothing
 app.put("/api/dressing/:clothingId", async (req, res) => {
   const clothingId = parseInt(req.params.clothingId);
-  const { name, description, type, size, genders, state } = req.body;
+  const { name, description, type, size, genders, state, imageUrl } = req.body;
+
+  console.log("Requête PUT pour modifier l'article");
+  console.log("ID de l'article :", clothingId);
+  console.log("Données reçues :", req.body);
 
   try {
     const updatedClothing = await prisma.clothing.update({
-      where: { id: clothindId },
-      data: {name, description, type, size, genders, state },
+      where: { id: clothingId },
+      data: { name, description, type, size, genders, state },
     });
+
+    if (imageUrl) {
+      await prisma.picture.update({
+        where: { clothingId: clothingId }, // Met à jour toutes les images associées
+        data: { url: imageUrl },
+      });
+    }
+
     res.json(updatedClothing);
   } catch (error) {
     res.status(500).json({ error: "Erreur lors de la mise à jour"});

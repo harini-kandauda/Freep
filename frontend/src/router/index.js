@@ -7,6 +7,7 @@ import EditProfile from "/src/views/EditProfile.vue";
 import MyProfile from "/src/views/MyProfile.vue";
 import SignIn from "/src/views/SignIn.vue";
 import Dressing from "/src/views/Dressing.vue";
+import EditClothing from "/src/views/EditClothing.vue";
 
 
 const routes = [
@@ -50,6 +51,12 @@ const routes = [
     component: Dressing,
     props: true,
   },
+  {
+    path: "/edit_clothing/:id",
+    component: EditClothing,
+    props: true,
+  },
+
 ];
 
 const router = createRouter({
