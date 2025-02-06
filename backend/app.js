@@ -227,10 +227,10 @@ app.post("/auth/authenticate_user", async (req, res) => {
       });
       res.sendStatus(200);
     } else {
-      res.sendStatus(403);
+      res.sendStatus(401);
     }
   } else {
-    res.sendStatus(404);
+    res.sendStatus(402);
   }
 });
 
@@ -252,6 +252,30 @@ app.get("/auth/get_user", async (req, res) => {
       }
     } catch (error) {
       console.error(error);
+      res.status(500).json({ message: "Erreur serveur" });
+    }
+  } else {
+    return res.sendStatus(403);
+  }
+});
+
+// User logout
+
+app.post("/auth/logout", async (req, res) => {
+  const session_id = req.cookies.auth_user_session_id;
+  if (session_id) {
+    try {
+      // Supprimer la session en base de données
+      await prisma.session.delete({
+        where: { session_id },
+      });
+
+      // Effacer le cookie côté client
+      res.clearCookie("auth_user_session_id", { httpOnly: true });
+
+      res.sendStatus(200); // Déconnexion réussie
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion :", error);
       res.status(500).json({ message: "Erreur serveur" });
     }
   } else {
