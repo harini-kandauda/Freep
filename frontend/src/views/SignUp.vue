@@ -13,7 +13,7 @@
           <h2
             class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900"
           >
-            Création de compte
+            Créer un compte
           </h2>
         </div>
 

@@ -13,7 +13,7 @@
           <h2
             class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900"
           >
-            Connectez-vous à votre compte
+            Connectez-vous
           </h2>
         </div>
 
@@ -76,11 +76,12 @@
           <div v-if="errorMessage">{{ errorMessage }}</div>
           <p class="mt-10 text-center text-sm/6 text-gray-500">
             Pas de compte ?
-            <a
-              href="#"
+            <router-link
               class="font-semibold text-indigo-600 hover:text-indigo-500"
-              >Créer un compte</a
-            >
+              to="/signup"
+              v-if="authStore.user === null"
+              >Créer un compte</router-link
+              >
           </p>
         </div>
       </div>
